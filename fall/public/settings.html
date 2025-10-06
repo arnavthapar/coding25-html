@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="Cache-Control" content="no-store, must-revalidate"/>
+        <meta name="author" content="me">
+        <meta name="description" content="The London bridge is rising up, rising up, rising up">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="fall.css">
+        <noscript>You need to enable Javasript for this website to work. Who has that turned off?</noscript>
+        <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+        <title>Risen London Settings</title>
+        <style>.hide {display:none;} a {color: #9cb4f4;} a:visited {color: #c28ce6;}</style>
+    </head>
+    <body>
+        <div class="bg-box height-initial">
+            <div class="bordered">
+                <h1 class="box">Risen London User Settings</h1>
+            </div>
+        </div>
+        <div class="container">
+            <div class="bg-box height-initial max-width">
+                <div class="bordered">
+                    <div class="box">
+                        <a href="/">Go back to home</a>
+                        <hr class="max-width"/>
+                        <p>If this doesn't work, try changing your account details again. If it still doesn't work, do it untill it works.</p><br/>
+                        <div class="flex-row">
+                            <button id="pass">Change password</button>
+                            <button id="user">Change username</button>
+                            <button id="delete">Delete account</button>
+                        </div>
+                        <p id="text"></p>
+                        <form class="hide" id="changeForm">
+                            <input type="text" id ="change" placeholder="" autocomplete="off" required>
+                            <button type="submit">Submit</button>
+                            <button type="reset" class="hide" id="close">Close</button>
+                        </form>
+                        <p id="error"></p>
+                        <p id="success"></p>
+                    </div>
+                    <h2 class="box"><span>We are not related, nor have any affiliation with the creators of <a href="https://www.fallenlondon.com/">Fallen London</a> and likewise games from <a href="https://www.failbettergames.com/">Failbetter Games Limited</a> as this game is NOT official.</span></h2>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+<script>
+    let submitType = null
+    document.getElementById('changeForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const res = await fetch('/api/change', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                type: submitType,
+                value: document.getElementById('change').value
+            })
+        });
+        if (res.ok) {
+            document.getElementById('success').textContent = "Success!"
+            document.getElementById('error').textContent = "";
+            if (submitType === "delete") {
+                window.location.href = "/"
+            }
+        } else {
+            switch (submitType) {
+                case "username":
+                    switch (res.status) {
+                        case 409:
+                            document.getElementById('error').textContent = 'That username is taken.';
+                            break;
+                        case 413:
+                            document.getElementById('error').textContent = 'Username must be less than 45 characters.';
+                            break;
+                        case 401:
+                            document.getElementById('error').textContent = 'You no longer have your account stored as a cookie, please exit and log in again.';
+                            break;
+                        case 500:
+                            document.getElementById('error').textContent = 'An internal server error occured. Try again later.';
+                            break;
+                        default:
+                            document.getElementById('error').textContent = `An unknown error of type ${res.status} occured. Try again later`;
+                            break;
+                    }
+                    document.getElementById('success').textContent = "";
+                    break;
+                case "password":
+                    switch (res.status) {
+                        case 401:
+                            document.getElementById('error').textContent = 'You no longer have your account stored as a cookie, please exit and log in again.';
+                            break;
+                        case 413:
+                            document.getElementById('error').textContent = 'Password must be less than 45 characters.';
+                            break;
+                        case 500:
+                            document.getElementById('error').textContent = 'An internal server error occured. Try again later.';
+                            break;
+                        default:
+                            document.getElementById('error').textContent = `An unknown error of type ${res.status} occured. Try again later`;
+                            break;
+                    }
+                    document.getElementById('success').textContent = "";
+                    break;
+                case "delete":
+                    switch (res.status) {
+                        case 400:
+                            document.getElementById('error').textContent = 'You must type DELETE in all capital letters.';
+                            break;
+                        case 401:
+                            document.getElementById('error').textContent = 'You no longer have your account stored as a cookie, please exit and log in again.';
+                            break;
+                        case 500:
+                            document.getElementById('error').textContent = 'An internal server error occured. Try again later.';
+                            break;
+                        default:
+                            document.getElementById('error').textContent = `An unknown error of type ${res.status} occured. Try again later`;
+                            break;
+                    }
+                    document.getElementById('success').textContent = "";
+                    break;
+                default:
+                    document.getElementById('error').textContent = 'Wow you either are looking in the code or broke the website';
+                    document.getElementById('success').textContent = "";
+                    break;
+            }
+        }
+    }
+    document.getElementById('pass').addEventListener('click', () => { // Password
+        elements = document.querySelectorAll('.hide');
+        elements.forEach(element => {
+            element.classList = 'show';
+        })
+        submitType = "password"
+        document.getElementById('text').textContent = "Change your password";
+        document.getElementById('change').placeholder = "Change password";
+        document.getElementById('success').textContent = "";
+        document.getElementById('error').textContent = "";
+    });
+
+    document.getElementById('user').addEventListener('click', () => { // Username
+        elements = document.querySelectorAll('.hide');
+        elements.forEach(element => {
+            element.classList = 'show';
+        })
+        submitType = "username"
+        document.getElementById('text').textContent = "Change your username";
+        document.getElementById('change').placeholder = "Change username";
+        document.getElementById('success').textContent = "";
+        document.getElementById('error').textContent = "";
+    });
+
+    document.getElementById('delete').addEventListener('click', () => { // Delete
+        elements = document.querySelectorAll('.hide');
+        elements.forEach(element => {
+            element.classList = 'show';
+        })
+        submitType = "delete"
+        document.getElementById('text').textContent = "Type DELETE in all capital letters to delete your account. Goodbye, not so delicious friend.";
+        document.getElementById('change').placeholder = "DELETE";
+        document.getElementById('success').textContent = "";
+        document.getElementById('error').textContent = "";
+    });
+    document.getElementById('close').addEventListener('click', () => {
+        elements = document.querySelectorAll('.show');
+        elements.forEach(element => {
+            element.classList = 'hide';
+        })
+        document.getElementById('text').textContent = "";
+        document.getElementById('success').textContent = "";
+        document.getElementById('error').textContent = "";
+    });
+</script>

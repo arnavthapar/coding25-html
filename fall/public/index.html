@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-store, must-revalidate"/>
+<meta name="author" content="me">
+<meta name="description" content="The London bridge is rising up, rising up, rising up">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="fall.css">
+<noscript>You need to enable Javasript for this website to work. Who has that turned off?</noscript>
+<link rel="icon" type="image/x-icon" href="images/favicon.ico">
+<title>Risen London</title>
+</head>
+<body>
+<div class="container">
+    <div class="bg-box content">
+        <div class="bordered">
+            <div class="box centered">
+                <img src="images/rlLogo.png" alt="Risen London logo" id="logo"/>
+                <h1 class="centered">Welcome to Risen London!</h1>
+            </div>
+            <div>
+                <!--Log in and create account-->
+                <div>
+                    <form class="box" id="loginForm">
+                        <input type="text" id="username" placeholder="Put username here" autocomplete="off" required>
+                        <input type="password" id="password" placeholder="Put password here" required>
+                        <div class="flex-row">
+                            <button type="submit" value="login">Login</button>
+                            <button type="submit" value="create">Create Account</button>
+                        </div>
+                    </form>
+                </div>
+                <!--Response-->
+                <p id="error"></p>
+                <p id="success"></p>
+            </div>
+                <h2 class="box"><span>We are not related, nor have any affiliation with the creators of <a href="https://www.fallenlondon.com/">Fallen London</a> and likewise games from <a href="https://www.failbettergames.com/">Failbetter Games Limited</a> as this game is NOT official.</span></h2>
+            </div>
+    </div>
+</div>
+<footer>
+<div class="bg-box footer">
+    <div class="bordered">
+        <address>Email us nowhere</address>
+    </div>
+</div>
+</footer>
+</body>
+</html>
+<script>
+    document.getElementById('loginForm').onsubmit = async (e) => {
+    e.preventDefault();
+
+    // Get the clicked submit button
+    const submitter = e.submitter;
+    const action = submitter?.value;
+
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    if (action === 'login') {
+        const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({username, password})
+        });
+
+        if (res.ok) {
+            window.location.href = "/game";
+        } else {
+            document.getElementById('error').textContent =
+                'Login failed. Check to make sure the username and password is correct.';
+            }
+
+    } else {
+        const res = await fetch('/api/create-account', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({username, password})
+        });
+
+        const data = await res.json();
+        const createError = document.getElementById('error');
+        const createSuccess = document.getElementById('success');
+        createError.textContent = '';
+        createSuccess.textContent = '';
+
+        if (res.ok) {
+            createSuccess.textContent = 'Account created! You can now log in.';
+        } else {
+            if (res.status === 413) {
+                createError.textContent = 'Your username and password should be below 45 characters each.';
+            } else {
+                createError.textContent = data.message || 'Account creation failed.';
+            }
+        }
+    }
+};
+</script>

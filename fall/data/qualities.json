@@ -1,0 +1,23 @@
+{
+    "qualities":{
+        "Connection - Mr skibidi":1,
+        "No Connection - Mr skibidi":8,
+        "Dangerous":1,
+        "Shadowy":1,
+        "Watchful":1,
+        "Persuasive":1
+    },
+    "items":{
+        "Sovereigns":5
+    },
+    "CP":{},
+    "location":"",
+    "importantQ":[
+        "Dangerous",
+        "Shadowy",
+        "Watchful",
+        "Persuasive",
+        "Sovereigns"
+    ]
+
+}

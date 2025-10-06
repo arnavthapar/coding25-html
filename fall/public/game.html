@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-store, must-revalidate"/>
+<meta name="author" content="me">
+<meta name="description" content="The London bridge is rising up, rising up, rising up">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="fall.css">
+<noscript>You need to enable Javasript for this website to work. Who has that turned off?</noscript>
+<link rel="icon" type="image/x-icon" href="./images/favicon.ico">
+<script src="main.js" defer></script>
+<title>Risen London</title>
+</head>
+<body>
+<header>
+    <div class="height-initial bg-box" id="greeting">
+        <div class="bordered">
+            <h1>Welcome to Risen London, <span id="username"></span>!</h1>
+            <div>
+                <button id="logout">Log out of account</button>
+                <button id="settings">Account settings</button>
+            </div>
+        </div>
+    </div>
+</header>
+<!--Contains the options and story-->
+<div class="container">
+    <div class="bg-box content"><div class="bordered main"></div></div>
+<!--Contains extras-->
+    <aside>
+        <div class="bg-box extras">
+            <div class="bordered">
+                <h3 class="box" id="actions">Actions: <span id="actions"></span>/20</h3> <!--Actions-->
+                <p class="box">The London bridge is rising up, rising up, rising up</p>
+                <p class="box" id="location"></p> <!--Location-->
+                <div class="box">
+                    <select title='Qualities or Items' name="Qualities or Items" id="qi">
+                        <option value="qualities">Qualities</option>
+                        <option value="items">Items</option>
+                    </select>
+                    <input type="text" id="qualitySearch" placeholder="Search">
+                    <div id="qualitiesBox"></div>
+                </div>
+            </div>
+        </div>
+    </aside>
+</div>
+<footer>
+<div class="bg-box footer">
+    <div class="bordered">
+        <address>Email us nowhere</address>
+        <h2><span>We are not related, nor have any affiliation with the creators of <a href="https://www.fallenlondon.com/">Fallen London</a> and likewise games from <a href="https://www.failbettergames.com/">Failbetter Games Limited</a> as this game is NOT official.</span></h2>
+    </div>
+</div>
+</footer>
+</body>
+</html>
+<script>
+    async function checkAuth() {
+        const res = await fetch('/api/check-auth');
+        const data = await res.json();
+        if (!data.loggedIn) {
+            window.location.href = '/';
+        }
+        document.getElementById('username').textContent = data.user;
+    }
+
+    async function logout() {
+        await fetch('/api/logout', {method: 'POST'});
+        window.location.href = '';
+    }
+
+    checkAuth();
+    document.getElementById('logout').addEventListener('click', () => {
+        logout();
+    });
+    document.getElementById('settings').addEventListener('click', () => {
+        window.location.href = 'settings';
+    });
+    document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+        checkAuth(); // This just checks for if you logged in with a different account or something to stop visual glitches from happening
+    }
+    });
+</script>
