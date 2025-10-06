@@ -1,0 +1,35 @@
+header {
+    background-color: #F1F1F1;
+    text-align: center;
+    padding: 20px;
+    color:palevioletred;
+    border-style:groove;
+    text-shadow:1px 1px black;
+}
+body {
+    background-image: linear-gradient(to bottom right, white, gray);
+}
+h2 {
+    color:darkkhaki;
+    text-shadow:1px 1px black;
+}
+h3 {
+    color:sandybrown;
+    text-shadow:1px 1px black;
+}
+p {
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    letter-spacing:0.5mm;
+}
+video {
+    border-style: groove;
+    border: 2px solid;
+    border-radius: 5px;
+
+}
+footer {
+    background-color: #F1F1F1;
+    border-style:groove;
+    text-align: center;
+    padding: 10px;
+}

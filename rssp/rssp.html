@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-store, must-revalidate"/>
+    <meta name="author" content="me">
+    <meta name="description" content="The London bridge is rising up, rising up, rising up">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./rssp.css">
+    <noscript>You need to enable Javasript for this website to work. Who has that turned off?</noscript>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <title>Risen London Sticker Program</title>
+</head>
+<body>
+    <header>
+        <div class="bg-box" style="min-height:auto; padding:10px;">
+            <div class="bordered">
+                <h1>Welcome to the Risen London Sticker Program, Everyone(Riya)!</h1>
+            </div>
+        </div>
+    </header>
+    <div class = "container">
+        <div class="bg-box main">
+            <div class="bordered">
+                <h1 class="box">Your tasks</h1>
+                <div class="box">
+                    <div style="text-align: center;">
+                        <input type="text" id="task-input" placeholder="Enter a task name...">
+                        <button id="add-btn">Add Task</button>
+                    </div>
+                    <ul id="task-list"></ul>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-box extras">
+            <div class="bordered">
+                    <h1 class="box">Your Stickers</h1>
+                    <div id="sticker-gallery"></div>
+            </div>
+        </div>
+    </div>
+    <div id="overlay" style="display: none;">
+        <div id="drop-area" class="drop">Drop your sticker here!</div>
+    </div>
+</body>
+</html>
+<script>
+const addBtn = document.getElementById("add-btn");
+const taskInput = document.getElementById("task-input");
+const taskList = document.getElementById("task-list");
+const overlay = document.getElementById("overlay");
+const dropArea = document.getElementById("drop-area");
+const stickerGallery = document.getElementById("sticker-gallery");
+
+addBtn.addEventListener("click", () => {
+    const taskName = taskInput.value.trim();
+    if (!taskName) return;
+
+    const li = document.createElement("li");
+
+    const span = document.createElement("span");
+    span.textContent = taskName;
+    span.className = "task-text";
+
+    const doneBtn = document.createElement("button");
+    doneBtn.textContent = "✓";
+    doneBtn.className = "done-btn";
+
+    const upBtn = document.createElement("button");
+    upBtn.textContent = "↑";
+    upBtn.className = "move-btn";
+
+    const downBtn = document.createElement("button");
+    downBtn.textContent = "↓";
+    downBtn.className = "move-btn";
+
+    doneBtn.addEventListener("click", () => {
+        li.classList.add("done");
+        doneBtn.remove();
+        upBtn.remove();
+        downBtn.remove();
+
+        taskList.appendChild(li); // move to bottom
+
+        // Show overlay
+        overlay.style.display = "flex";
+        overlayMsg.textContent = "Task Completed! Drop a sticker!";
+    });
+
+    upBtn.addEventListener("click", () => {
+        const prev = li.previousElementSibling;
+        if (prev && !prev.classList.contains("done")) {
+            taskList.insertBefore(li, prev);
+        }
+    });
+
+    downBtn.addEventListener("click", () => {
+        const next = li.nextElementSibling;
+        if (next && !next.classList.contains("done")) {
+            taskList.insertBefore(next, li);
+        }
+    });
+
+    li.appendChild(span);
+    li.appendChild(doneBtn);
+    li.appendChild(upBtn);
+    li.appendChild(downBtn);
+    taskList.insertBefore(li, taskList.firstChild); // Add to top
+
+    taskInput.value = "";
+});
+
+taskInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") addBtn.click();
+});
+
+// Drag and drop area
+["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
+    dropArea.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    });
+});
+
+dropArea.addEventListener("dragover", () => {
+    dropArea.classList.add("hover");
+});
+
+dropArea.addEventListener("dragleave", () => {
+    dropArea.classList.remove("hover");
+});
+
+dropArea.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropArea.classList.remove("hover");
+    overlay.style.display = "none"; // Hide overlay on drop
+
+    const files = e.dataTransfer.files;
+    const items = e.dataTransfer.items;
+
+    if (files && files.length) {
+        for (const file of files) {
+            if (file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = document.createElement("img");
+                    img.src = event.target.result;
+                    stickerGallery.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert("Only image files (like PNGs) are allowed.");
+            }
+        }
+    }
+
+    if (items && items.length) {
+        for (const item of items) {
+            if (item.kind === "string" && item.type === "text/uri-list") {
+                item.getAsString((url) => {
+                    if (url.match(/\.(jpeg|jpg|png|gif|webp)$/)) {
+                        const img = document.createElement("img");
+                        img.src = url;
+                        stickerGallery.appendChild(img);
+                    } else {
+                        alert("Only direct image links are supported.");
+                    }
+                });
+            }
+        }
+    }
+});
+</script>

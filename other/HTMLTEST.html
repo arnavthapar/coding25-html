@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<title>My Page Title</title>
+<link rel="icon" type="image/x-icon" href="images/alien.bmp">
+<!--This changes the style.-->
+<link href = "css/html.css" rel="stylesheet">
+    <!--Padding is space in a border.
+        Margin is space outside of a border.
+        The a's are types of links.
+    -->
+</head>
+<!--Background color choose the background color.-->
+<body style="background-color:palegoldenrod">
+<!-- This is contact info.-->
+<address>
+    Written by John Doe.<br>
+    Visit us at:<br>
+    Example.com<br>
+    Box 564, Disneyland<br>
+    USA
+</address>
+<!--Prints a heading and text.-->
+<h1>My Heading</h1>
+<p>My paragraph.</p>
+<!--This link goes to an id later.-->
+<a href="#C4">Jump to Chapter 4</a>
+<!--The style attribute makes text different.
+    Title adds a tooltip.-->
+<p title="I'm a tooltip", style="color:red;">This is a red paragraph.</p>
+<p style="background-color:red">This has a red background.</p>
+<p style="font-family:courier;">This is a paragraph with fonts.</p>
+<p style="font-size:160%;">This is a big paragraph.</p>
+<p style="text-align:center;">This is center aligned.</p>
+<p style="border:2px solid #ff6347;">This has a border.</p>
+<p style="background-image: url('images/alien.bmp')">This has a image background.</p>
+<!--Adding background-repeat: no-repeat; can remove the repeating for image backgrounds.
+    background-attachment: fixed; These make the image cover the entire text.
+    background-size: cover;
+    This makes the image fit the entire text.
+    background-size: 100% 100%;-->
+<!--Picture lets the image change for different sizes of screen.-->
+    <picture>
+        <source media="(min-width: 650px)" srcset="images/alien.bmp">
+        <source media="(min-width: 465px)" srcset="images/ship.bmp">
+        <img src="images/favgif.gif">
+    </picture>
+<!--Other things also change text.-->
+<p><b>Bold</b><strong>Strong</strong><i>Italic</i><em>Emphasis</em><small>Small</small><mark>Marked</mark><del>Deleted</del><ins>Inserted</ins><sub>subscript</sub><sup>SUPERSCRIPT</sup></p>
+<!--pre is like p, but is pre-formatted.-->
+<pre>
+    Pre is like p
+
+    but its not
+
+    Because yeah
+
+    ok bye
+</pre>
+<!--There are 6 levels for headings.-->
+<h1>This is heading 1</h1>
+<h2>This is heading 2</h2>
+<h3>This is heading 3</h3>
+<h4>This is heading 4</h4>
+<h5>This is heading 5</h5>
+<h6>This is heading 6</h6>
+<!--This creates a link.-->
+<a href="https://www.w3schools.com">This is a link</a>
+<!--
+    target="" < Put one of these.
+    _self - Default. Opens the document in the same window/tab as it was clicked
+    _blank - Opens the document in a new window or tab
+    _parent - Opens the document in the parent frame
+    _top - Opens the document in the full body of the window
+    mailto: is used when mailing to email. NOT IN THE TARGET.
+-->
+<!--br creates a line break.-->
+<p>This is a <br> paragraph with a line break.</p>
+<!--hr creates a thematic break.-->
+<hr>
+<!--This creates a picture with a defined height and width.
+    Alt is the alternative text.-->
+<img src="images/ship.bmp" alt="W3Schools.com" style="width:128px;height:128px;">
+<!--This makes the image go on the right side of the screen.-->
+<img src="images/ship.bmp" alt="W3Schools.com" style="float:right;width:42px;height:42px;" usemap="#workmap">
+<!--This is an image map for the image above, allowing different areas of the image to do certain things.-->
+<map name="workmap">
+<area shape="rect" coords="34,44,0,0" alt="Computer" href="wow.html">
+<area shape="rect" coords="2,1,0,0" alt="Phone" href="website.html">
+<area shape="circle" coords="7,0,44" alt="Coffee" href="JSTEST.html">
+</map>
+<!--The shape can be any of these.
+    rect - defines a rectangular region
+    circle - defines a circular region
+    poly - defines a polygonal region
+    default - defines the entire region-->
+<!--This is an id, allowing quick transit through links.-->
+<h2 id="C4">Chapter 4</h2>
+<!--This is a quote.-->
+<blockquote cite="http://www.worldwildlife.org/who/index.html">
+    For 60 years, WWF has worked to help people and nature thrive. As the world's leading conservation organization, WWF works in nearly 100 countries. At every level, we collaborate with people around the world to develop and deliver innovative solutions that protect communities, wildlife, and the places in which they live.
+</blockquote>
+<p>WWF's goal is to: <q>Build a future where people live in harmony with nature.</q></p>
+<!--This shows an abreviation.-->
+<p><p>The <abbr title="World Health Organization">WHO</abbr> was founded in 1948.</p></p>
+<!--This cites text.-->
+<p><cite>The Scream</cite> by Edvard Munch. Painted in 1893.</p>
+<!--BDO overides the text direction.-->
+<bdo dir="rtl">This text will be written from right to left</bdo>
+</body>
+</html>

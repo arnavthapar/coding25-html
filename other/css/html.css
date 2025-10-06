@@ -1,0 +1,54 @@
+header {
+    background-color: #F1F1F1;
+    text-align: center;
+    padding: 20px;
+    color:palevioletred;
+    border-style:groove;
+    text-shadow:1px 1px black;
+}
+h2 {
+    color:darkkhaki;
+    text-shadow:1px 1px black;
+}
+h3 {
+    color:sandybrown;
+    text-shadow:1px 1px black;
+}
+video {
+    border-style: groove;
+    border: 2px solid;
+    border-radius: 5px;
+
+}
+footer {
+    background-color: #F1F1F1;
+    border-style:groove;
+    text-align: center;
+    padding: 10px;
+}
+h1   {color: blue;}
+p    {
+    color: green;
+    padding: 10px;
+    margin: 5px;
+}
+a:link {
+    color: green;
+    background-color: transparent;
+    text-decoration: none;
+}
+a:visited {
+    color: pink;
+    background-color: transparent;
+    text-decoration: none;
+}
+a:hover {
+    color: red;
+    background-color: transparent;
+    text-decoration: underline;
+}
+a:active {
+    color: yellow;
+    background-color: transparent;
+    text-decoration: underline;
+}

@@ -1,0 +1,55 @@
+<html>
+  <head>
+    <title>ARNAV'S CHANNEL</title>
+    <link rel="icon" type="image/x-icon" href="images/favgif.gif">
+    <link href = "css/test.css" rel="stylesheet"/>
+  </head>
+  <body>
+    <h1><header>ARNAV'S CHANNEL: CHECK OUT THESE VIDEOS!</header></h1>
+    <p>I'm Arnav, here with Advika and Gautam.</p>
+    <p>Advika is Gautam's sister.</p>
+    <button type="button" class="collapsible"></div><h2>VIDEOS IN THE ROCK PARK:</h2></button>
+    <div class="content">
+      <video width= "240" height="320" controls>
+        <source src="videos/VID_20230612_171856925.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <video width="240" height="320" controls>
+        <source src="videos/VID_20230612_172304282.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <video width="240" height="320" controls>
+        <source src="videos/VID_20230612_173112847.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+  </div>
+  <button type="button" class="collapsible"></div><h2>VIDEOS IN OUR HOUSES:</h2></button>
+  <div class="content">
+    <h3>ADVIKA AND GAUTAM'S HOUSE:</h3>
+    <p><i>Sorry, looks like we haven't made any videos here.</i></p>
+    <h3>ARNAV'S HOUSE:</h3>
+
+    <video width="240" height="320" controls>
+      <source src="videos/VID_20230630_164852494.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+  <footer><h1>Hamburger</h1></footer>
+  <script>
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = content.scrollHeight + "px";
+        }
+      });
+    }
+</script>
+  </body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>JAVASCRIPT TEST</title>
+        <link rel="stylesheet" href="css/cssTEST.css">
+        <link rel="icon" type="image/x-icon" href="images/ship.bmp">
+        <script>
+            function myFunction() {
+                document.getElementById("demo2").innerHTML = "You can also put functions in the body. ALWAYS put functions AFTER all other code.";
+            }
+        </script>
+    </head>
+    <body>
+        <p id="demo">JavaScript can change HTML content.</p>
+
+        <button type="button" onclick='document.getElementById("demo").innerHTML = "Hello JavaScript!"'>Click Me!</button>
+        <button type="button"
+        onclick='document.getElementById("demo").style.fontSize = "35px"';>Click me too!</button>
+        <button type="button" onclick='document.getElementById("demo").style.display = "none"';>Click me to make it disappear</button>
+        <button type="button" onclick='document.getElementById("demo").style.display = "block"; '>Click me to make it reappear!</button>
+
+        <p id="demo2">Click the button below to change this text using a function in the head!</p>
+        <button type="button" onclick="myFunction()">Try it</button>
+        <!-- You can even get functions from another project using  <script src="file.name"></script>  --->
+        <br>
+        <script>
+            alert("You can use JS to make notifications!");
+            console.log("Hey, in JS, you can log things in the console!");
+            document.write(5 + 6);
+            document.write(", You can even write in java script using document.write, but use it ONLY for testing.");
+        </script>
+        <button onclick="window.print()">You can also print the webpage!</button>
+        <!--VARIABLES extra stuff is down here-->
+        <script>
+            let x, y, z; // make vars without value
+            x = 5; // make value
+            y = 6; // make value
+            z = x + y; // make value
+            // OR
+            var a = 5; var b = 6; var c = a + b; // makes multiple vars on one line
+            /*
+            var 	Declares a variable
+            let 	Declares a block variable
+            const 	Declares a block constant
+            if 	Marks a block of statements to be executed on a condition
+            switch 	Marks a block of statements to be executed in different cases
+            for 	Marks a block of statements to be executed in a loop
+            function 	Declares a function
+            return 	Exits a function
+            try 	Implements error handling to a block of statements
+            */
+        </script>
+            <h1>Hello! Choose a color:</h1>
+            <button onclick = "setbg('red')">Go red</button>
+            <button onclick = "setbg('lightgreen')">Go green</button>
+            <button onclick = "setbg('blue')">Go blue</button>
+            <button onclick = "setbg('white')">Go white</button>
+            <hr>
+            <script>
+            function setbg(col) {
+                document.body.style.backgroundColor = col;
+                alert("Color changed successfully!");
+            }
+            </script>
+    </body>
+</html>
