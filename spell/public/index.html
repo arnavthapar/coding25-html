@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-store, must-revalidate"/>
+    <meta name="author" content="me">
+    <meta name="description" content="words or smth bro idek">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="words.css">
+    <noscript>You need to enable Javasript for this website to work. Who has that turned off?</noscript>
+    <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
+    <!--<script src="main.js" defer></script>!-->
+    <title>name here</title>
+</head>
+<body>
+    <h1 class="box">The Daily Clues Not By Sam</h1>
+    <div class="horizontal">
+        <div class="box" id="starting">
+            <h3>Starting Word</p>
+            <p id="startword">WORDHERE</p>
+        </div>
+        <div class="vertical">
+            <form class="vertical box width100" action="/api/submit_word" method="post">
+                <label for="input">Type A Word:</label>
+                <input id="input" name="word" type="text" required>
+                <button name="submit" type="submit">Submit Decision</button>
+            </form>
+            <div class="box width100">
+                <h3>Limit:</h3>
+                <p id="limit">LIMIT</p>
+            </div>
+        </div>
+        <div class="box" id="ending">
+            <h3>Ending Word</p>
+            <p id="endword">WORDHERE</p>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    async function getWords() {
+        const res = await fetch('/api/words');
+        const data = await res.json();
+        document.getElementById('startword').textContent = data.start;
+        document.getElementById('endword').textContent = data.end;
+        document.getElementById('limit').textContent = data.lim
+    }
+    getWords()
+</script>
