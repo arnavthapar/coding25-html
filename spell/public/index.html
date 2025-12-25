@@ -14,36 +14,145 @@
 </head>
 <body>
     <h1 class="box">The Daily Clues Not By Sam</h1>
-    <div class="horizontal">
-        <div class="box" id="starting">
-            <h3>Starting Word</p>
-            <p id="startword">WORDHERE</p>
-        </div>
-        <div class="vertical">
-            <form class="vertical box width100" action="/api/submit_word" method="post">
-                <label for="input">Type A Word:</label>
-                <input id="input" name="word" type="text" required>
-                <button name="submit" type="submit">Submit Decision</button>
-            </form>
-            <div class="box width100">
-                <h3>Limit:</h3>
-                <p id="limit">LIMIT</p>
+    <h1 class="box" id="day">TODAY</h1>
+    <div id="game">
+        <div class="horizontal">
+            <div class="box" id="starting">
+                <h3>Starting Word</p>
+                <p id="startword">WORDHERE</p>
+            </div>
+            <div class="vertical" id="guesses">
+                <form id="wordForm" class="vertical box width100" action="/api/submit_word" method="post">
+                    <label for="input">Type a word:</label>
+                    <input id="input" name="word" type="text" required>
+                    <button id="submitButton" name="submit" type="submit">Submit Decision</button>
+                </form>
+                <div class="box width100">
+                    <h3>Limit:</h3>
+                    <p id="limit">LIMIT</p>
+                </div>
+            </div>
+            <div class="box" id="ending">
+                <h3>Ending Word</p>
+                <p id="endword">WORDHERE</p>
             </div>
         </div>
-        <div class="box" id="ending">
-            <h3>Ending Word</p>
-            <p id="endword">WORDHERE</p>
-        </div>
+    </div>
+    <h1 class="box">How to Play</h1>
+    <div class="box fit-text">
+        <p>This game is highly simple. The goal is to turn the starting word into the ending word in the alloted guesses.</p>
+        <p>You are only allowed to change one letter per change, and each change must be a valid word.</p>
     </div>
 </body>
 </html>
 <script>
-    async function getWords() {
-        const res = await fetch('/api/words');
-        const data = await res.json();
-        document.getElementById('startword').textContent = data.start;
-        document.getElementById('endword').textContent = data.end;
-        document.getElementById('limit').textContent = data.lim
+async function getWords() {
+    const res = await fetch('/api/words');
+    const data = await res.json();
+    document.getElementById('startword').textContent = data.start;
+    document.getElementById('endword').textContent = data.end;
+    document.getElementById('limit').textContent = data.lim;
+    document.getElementById('submitButton').disabled = data.over
+}
+
+async function loadPreviousGuesses() {
+    const res = await fetch('/api/get-guesses');
+    const data = await res.json();
+
+    data.guesses.forEach((word, index) => {
+        addGuessBox(word, index + 1);
+    });
+    if (data.win) {
+        showResultBox('win', data.count);
+    } else if (data.over) {
+        showResultBox('lose', data.count);
     }
-    getWords()
+}
+function addGuessBox(word, count) {
+    const guessBox = document.createElement('div');
+    guessBox.classList.add('box', 'width100');
+    guessBox.innerHTML = `
+        <h4 style="margin:0;">Change ${count}</h4>
+        <p style="margin:0;">${word}</p>
+    `;
+    guessesContainer.insertBefore(guessBox, limitBox);
+}
+
+function showResultBox(type, count) {
+    const box = document.createElement('div');
+    box.classList.add(type === 'win' ? 'greenbox' : 'redbox', 'width100');
+
+    let plural = count > 1 ? 'es' : '';
+    if (type === 'win') {
+        box.innerHTML = `
+            <h4 style="margin:0;">You Win!</h4>
+            <p style="margin:0;">You won in ${count} guess${plural}.</p>
+        `;
+    } else {
+        box.innerHTML = `
+            <h4 style="margin:0;">You Lost...</h4>
+            <p style="margin:0;">You lost in ${count} guess${plural}.</p>
+        `;
+    }
+
+    game.appendChild(box);
+    document.getElementById('submitButton').disabled = true;
+}
+
+getWords();
+loadPreviousGuesses();
+document.getElementById('day').textContent = Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/New_York',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    }).format(new Date());
+
+const form = document.getElementById('wordForm');
+const guessesContainer = document.getElementById('guesses');
+
+// Find the limit box to insert before it
+const limitBox = guessesContainer.querySelector('.box.width100');
+const game = document.getElementById('game')
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const word = form.word.value.trim().toLowerCase();
+    if (!word) return;
+
+    try {
+        const res = await fetch('/api/submit_word', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({word})
+        });
+        const data = await res.json();
+
+        if (data.valid) {
+            // Create a new box for the guess
+            addGuessBox(word, data.count)
+
+        } else if (data.over) {
+            alert('You are over the allowed guesses.');
+            document.getElementById('submitButton').disabled = true
+        } else if (!data.error) {
+            alert(`"${word}" is not valid.`);
+        } else {
+            alert(data.error)
+        }
+        if (data.nextOver) { // Lose
+            document.getElementById('submitButton').disabled = true
+            showResultBox("lose", data.count)
+        }
+        if (data.win) {
+            document.getElementById('submitButton').disabled = true
+            showResultBox("win", data.count)
+        }
+
+        form.reset();
+    } catch (err) {
+        console.error(err);
+        alert('Error submitting word');
+    }
+});
 </script>
