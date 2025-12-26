@@ -4,37 +4,47 @@
     <meta charset="UTF-8">
     <meta http-equiv="Cache-Control" content="no-store, must-revalidate"/>
     <meta name="author" content="me">
-    <meta name="description" content="words or smth bro idek">
+    <meta name="description" content="Word Ladder">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="words.css">
     <noscript>You need to enable Javasript for this website to work. Who has that turned off?</noscript>
-    <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="./images/ladder.ico">
     <!--<script src="main.js" defer></script>!-->
-    <title>name here</title>
+    <title>Word Ladder</title>
 </head>
 <body>
-    <h1 class="box">The Daily Clues Not By Sam</h1>
-    <h1 class="box" id="day">TODAY</h1>
+    <h1 class="box">Word Ladder</h1>
+    <h1 class="box" id="day">Puzzle for 2025-00-00</h1>
     <div id="game">
         <div class="horizontal">
-            <div class="box" id="starting">
+            <div class="box fit-text" id="starting">
                 <h3>Starting Word</p>
-                <p id="startword">WORDHERE</p>
+                <p id="startword">words</p>
             </div>
-            <div class="vertical" id="guesses">
+            <div class="vertical grid" id="guesses">
                 <form id="wordForm" class="vertical box width100" action="/api/submit_word" method="post">
                     <label for="input">Type a word:</label>
                     <input id="input" name="word" type="text" required>
                     <button id="submitButton" name="submit" type="submit">Submit Decision</button>
                 </form>
-                <div class="box width100">
+                <div id="result"></div>
+            </div>
+            <div class="vertical ">
+                <div class="box fit-text" id="ending">
+                    <h3>Ending Word</p>
+                    <p id="endword">words</p>
+                </div>
+                <div class="box" id="limit-box"> <!-- THIS BOX SHOULD BE THE SAME SIZE AS THE id="ending" BOX-->
                     <h3>Limit:</h3>
-                    <p id="limit">LIMIT</p>
+                    <p id="limit">5</p>
                 </div>
             </div>
-            <div class="box" id="ending">
-                <h3>Ending Word</p>
-                <p id="endword">WORDHERE</p>
+            <div class="vertical" id="button-box">
+                <div class="box fit-text vertical">
+                    <button id="reset" name="reset" type="submit">Reset Puzzle</button>
+                    <button id="undo" name="undo" type="submit">Undo Change</button>
+                    <p id="lowest">Lowest Possible Changes: </p>
+                </div>
             </div>
         </div>
     </div>
@@ -42,6 +52,7 @@
     <div class="box fit-text">
         <p>This game is highly simple. The goal is to turn the starting word into the ending word in the alloted guesses.</p>
         <p>You are only allowed to change one letter per change, and each change must be a valid word.</p>
+        <p>The game gets harder over the week. (Saturday is the hardest!) This game is in EST.</p>
     </div>
 </body>
 </html>
@@ -51,8 +62,9 @@ async function getWords() {
     const data = await res.json();
     document.getElementById('startword').textContent = data.start;
     document.getElementById('endword').textContent = data.end;
-    document.getElementById('limit').textContent = data.lim;
+    document.getElementById('limit').textContent = data.lim + " changes";
     document.getElementById('submitButton').disabled = data.over
+    document.getElementById('lowest').textContent += data.lowest
 }
 
 async function loadPreviousGuesses() {
@@ -70,12 +82,26 @@ async function loadPreviousGuesses() {
 }
 function addGuessBox(word, count) {
     const guessBox = document.createElement('div');
-    guessBox.classList.add('box', 'width100');
+    guessBox.classList.add('box', 'width100', 'hidden');
+    //guessBox.id = "newBox";
+    if (word == document.getElementById('endword').textContent) {
+        guessBox.classList.add('greenbox');
+    }
+    if (word == document.getElementById('startword').textContent) {
+        guessBox.classList.add('redbox');
+    }
     guessBox.innerHTML = `
         <h4 style="margin:0;">Change ${count}</h4>
         <p style="margin:0;">${word}</p>
     `;
     guessesContainer.insertBefore(guessBox, limitBox);
+    setTimeout(() => {
+        guessBox.classList.remove('hidden')
+    }, 100);
+    setTimeout(() => {
+        limitBox.classList.add('shift-down');
+        form.classList.add('shift-down');
+    }, 50);
 }
 
 function showResultBox(type, count) {
@@ -101,19 +127,26 @@ function showResultBox(type, count) {
 
 getWords();
 loadPreviousGuesses();
-document.getElementById('day').textContent = Intl.DateTimeFormat('en-CA', {
+document.getElementById('day').textContent = `Puzzle for ${Intl.DateTimeFormat('en-CA', {
         timeZone: 'America/New_York',
         year: 'numeric',
         month: '2-digit',
         day: '2-digit'
-    }).format(new Date());
+    }).format(new Date())}`;
 
 const form = document.getElementById('wordForm');
 const guessesContainer = document.getElementById('guesses');
 
 // Find the limit box to insert before it
 const limitBox = guessesContainer.querySelector('.box.width100');
-const game = document.getElementById('game')
+const game = document.getElementById('button-box')
+document.getElementById('reset').addEventListener('click', async (e) => {
+    e.preventDefault();
+
+    await fetch('/api/reset', {method: 'GET'});
+
+    location.reload();
+});
 
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -130,19 +163,28 @@ form.addEventListener('submit', async (e) => {
 
         if (data.valid) {
             // Create a new box for the guess
-            addGuessBox(word, data.count)
+            addGuessBox(word, data.count);
+            const box = document.getElementById('result')
+            box.className = '';
+            box.innerHTML = '';
 
         } else if (data.over) {
             alert('You are over the allowed guesses.');
             document.getElementById('submitButton').disabled = true
         } else if (!data.error) {
-            alert(`"${word}" is not valid.`);
+            const box = document.getElementById('result')
+            box.className = 'redbox width100';
+            box.textContent = `The word ${word} is not valid.`;
         } else {
-            alert(data.error)
+            const box = document.getElementById('result')
+            box.classList.add('redbox', 'width100');
+            box.textContent = `${data.error} `;
         }
         if (data.nextOver) { // Lose
-            document.getElementById('submitButton').disabled = true
-            showResultBox("lose", data.count)
+            if (data.valid) {
+                document.getElementById('submitButton').disabled = true
+                showResultBox("lose", data.count)
+            }
         }
         if (data.win) {
             document.getElementById('submitButton').disabled = true

@@ -6,7 +6,14 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = process.env.PORT;
+const rateLimit = require('express-rate-limit');
 
+// Limit submissions per second per IP
+const guessLimiter = rateLimit({
+    windowMs: 5 * 1000,
+    max: 5,
+    message: { success: false, error: 'Too many guesses. Slow down!' }
+});
 app.use(express.urlencoded({extended: true}));
 app.use(cors({origin:`http://localhost:${PORT}`}));
 
@@ -34,8 +41,11 @@ function dailyReset(req, res, next) {
 
         cookiesToClear.forEach(name => {
             res.clearCookie(name, {
-                path: '/',
-                signed: true
+                httpOnly: true,
+                signed: true,
+                sameSite: 'lax',
+                secure: false,
+                path: '/'
             });
         });
 
@@ -72,7 +82,8 @@ async function getWordData(day) {
     return {
         start: rows[0].word1,
         end: rows[0].word2,
-        limit: rows[0].dlimit
+        limit: rows[0].dlimit,
+        lowest: rows[0].lowest
     };
 }
 function getToday() {
@@ -116,7 +127,7 @@ app.get('/api/get-guesses', async (req, res) => {
         count: guesses.length
     });
 });
-app.post('/api/submit_word', async (req, res) => {
+app.post('/api/submit_word', guessLimiter, async (req, res) => {
     /*res.clearCookie('guesses', {
     httpOnly: true,
     signed: true,
@@ -180,18 +191,31 @@ app.post('/api/submit_word', async (req, res) => {
 app.get('', (_, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+app.get('/api/reset', async (_, res) => {
+    const cookiesToClear = ['guesses','lastDay'];
 
+    cookiesToClear.forEach(name => {
+        res.clearCookie(name, {
+            httpOnly: true,
+            signed: true,
+            sameSite: 'lax',
+            secure: false,
+            path: '/'
+        });
+    });
+    res.json({success:true})
+});
 app.get('/api/words', async (req, res) => {
     const data = await getWordData(getToday())
     if (!data) {
-        return res.status(404).json({ error: 'No puzzle for today' });
+        return res.status(404).json({ error:'No puzzle for today'});
     }
-    const {start: w1, end: w2, limit} = data;
+    const {start: w1, end: w2, limit, lowest} = data;
     let over = false
     if (getCount(req) >= limit) {
         over = true
     }
-    res.json({start:w1, end:w2, lim:limit, over:over})
+    res.json({start:w1, end:w2, lim:limit, over:over, lowest:lowest})
 });
 app.use((_req, res, _next) => {
     res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));

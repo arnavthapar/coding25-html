@@ -1,0 +1,10 @@
+apian - unapt = 26
+aback - apian = 20
+
+vlogs - zebra = 15
+
+glams - trope = 5
+
+alary - trior = 9
+
+gusto - reply = 43 small, 6 big
